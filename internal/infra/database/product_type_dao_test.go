@@ -34,8 +34,11 @@ func TestProductTypeFindById(t *testing.T) {
 	db, err := arrangeDBConnection()
 	assert.Nil(t, err)
 
+	created, _ := entity.NewProductType(6, "Special Material")
+
 	//act
 	dao := NewProductTypeDAO(db)
+	_ = dao.Create(created)
 	pt, err := dao.FindById(6)
 
 	fmt.Println(pt)
@@ -54,8 +57,12 @@ func TestProductTypeFindAll(t *testing.T) {
 	db, err := arrangeDBConnection()
 	assert.Nil(t, err)
 
+	pt, _ := entity.NewProductType(6, "Special Material")
+
 	//act
 	dao := NewProductTypeDAO(db)
+	_ = dao.Create(pt)
+
 	ptList, err := dao.FindAll()
 
 	for _, pt := range ptList {
@@ -65,6 +72,7 @@ func TestProductTypeFindAll(t *testing.T) {
 	//assert
 	assert.NotNil(t, dao)
 	assert.Nil(t, err)
+	assert.GreaterOrEqual(t, len(ptList), 1)
 }
 
 func TestProductTypeCreate(t *testing.T) {
@@ -77,6 +85,7 @@ func TestProductTypeCreate(t *testing.T) {
 
 	//act
 	dao := NewProductTypeDAO(db)
+	_ = dao.Delete(pt)
 	err = dao.Create(pt)
 
 	//assert
@@ -98,6 +107,8 @@ func TestProductTypeUpdate(t *testing.T) {
 
 	//act
 	dao := NewProductTypeDAO(db)
+	_ = dao.Create(pt)
+	pt.Description = "Material Special"
 	err = dao.Update(pt)
 
 	//assert
@@ -106,7 +117,7 @@ func TestProductTypeUpdate(t *testing.T) {
 
 	ptFound, _ := dao.FindById(6)
 	fmt.Println(ptFound)
-	assert.Equal(t, ptFound.Description, pt.Description)
+	assert.Equal(t, "Material Special", ptFound.Description)
 }
 
 func TestProductTypeDelete(t *testing.T) {
@@ -119,6 +130,7 @@ func TestProductTypeDelete(t *testing.T) {
 
 	//act
 	dao := NewProductTypeDAO(db)
+	_ = dao.Create(pt)
 	err = dao.Delete(pt)
 
 	//assert
