@@ -62,7 +62,7 @@ func TestStockCreate(t *testing.T) {
 	db, err := arrangeDBConnection()
 	assert.Nil(t, err)
 
-	st, _ := entity.NewStock(6, "Stock Name")
+	st, _ := entity.NewStock(1, "Stock Name")
 
 	//act
 	dao := NewStockDAO(db)
@@ -73,7 +73,7 @@ func TestStockCreate(t *testing.T) {
 	assert.NotNil(t, dao)
 	assert.Nil(t, err)
 
-	ptFound, _ := dao.FindById(6)
+	ptFound, _ := dao.FindById(1)
 	assert.Equal(t, ptFound.Description, st.Description)
 
 }

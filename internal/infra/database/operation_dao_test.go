@@ -62,7 +62,7 @@ func TestOperationCreate(t *testing.T) {
 	db, err := arrangeDBConnection()
 	assert.Nil(t, err)
 
-	op, _ := entity.NewOperation(6, "Devolution")
+	op, _ := entity.NewOperation(2, "Withdrawal")
 
 	//act
 	dao := NewOperationDAO(db)
@@ -73,7 +73,7 @@ func TestOperationCreate(t *testing.T) {
 	assert.NotNil(t, dao)
 	assert.Nil(t, err)
 
-	opFound, _ := dao.FindById(6)
+	opFound, _ := dao.FindById(2)
 	assert.Equal(t, opFound.Name, op.Name)
 
 }
