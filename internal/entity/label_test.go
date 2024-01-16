@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"encoding/json"
+	"fmt"
 	"testing"
 	"time"
 
@@ -24,6 +26,8 @@ func TestNewLabel(t *testing.T) {
 	assert.NotEmpty(t, l.CreatedAt)
 	assert.NotEmpty(t, l.UpdatedAt)
 
+	myJson, _ := json.Marshal(l)
+	fmt.Println(string(myJson))
 }
 
 func TestWhenLabelIdIsRequired(t *testing.T) {

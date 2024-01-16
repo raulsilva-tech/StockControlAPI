@@ -1,0 +1,30 @@
+POST http://localhost:8888/users HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "name":"User Test",
+    "email":"test@example.com",
+    "password":"test"
+}
+###
+
+PUT http://localhost:8888/users/10 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "name":"Test User Updated",
+    "email":"test@example.com",
+    "password":"test"
+}
+###
+DELETE http://localhost:8888/users/10 HTTP/1.1
+###
+
+GET http://localhost:8888/users/10 HTTP/1.1
+Content-Type: application/json
+###
+
+GET http://localhost:8888/users HTTP/1.1
+Content-Type: application/json

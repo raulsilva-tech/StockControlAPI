@@ -19,8 +19,8 @@ var (
 )
 
 type UserSession struct {
-	Id int `json:"id"`
-	User
+	Id         int `json:"id"`
+	User       `json:"user"`
 	StartedAt  time.Time `json:"started_at"`
 	FinishedAt time.Time `json:"finished_at"`
 }

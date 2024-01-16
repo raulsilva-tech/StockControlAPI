@@ -79,7 +79,7 @@ func TestProductCreate(t *testing.T) {
 
 	ptFound, _ := dao.FindById(3)
 	assert.Equal(t, ptFound.Description, p.Description)
-	assert.Equal(t, ptFound.Type.Id, p.Type.Id)
+	assert.Equal(t, ptFound.ProductType.Id, p.ProductType.Id)
 
 }
 

@@ -1,0 +1,26 @@
+POST http://localhost:8888/stocks HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "description":"Test Stock"
+}
+###
+
+PUT http://localhost:8888/stocks/10 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "description":"Stock Test"
+}
+###
+DELETE http://localhost:8888/stocks/10 HTTP/1.1
+###
+
+GET http://localhost:8888/stocks/10 HTTP/1.1
+Content-Type: application/json
+###
+
+GET http://localhost:8888/stocks HTTP/1.1
+Content-Type: application/json

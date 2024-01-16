@@ -17,7 +17,7 @@ type Label struct {
 	ValidDate time.Time `json:"valid_date"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	Product
+	Product   `json:"product"`
 }
 
 func (l *Label) Validate() error {

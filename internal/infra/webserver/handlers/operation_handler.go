@@ -12,22 +12,18 @@ import (
 	"github.com/raulsilva-tech/StockControlAPI/internal/infra/database"
 )
 
-type Error struct {
-	Message string `json:"message"`
+type OperationHandler struct {
+	DAO database.OperationDAO
 }
 
-type ProductTypeHandler struct {
-	DAO database.ProductTypeDAO
+func NewOperationHandler(dao database.OperationDAO) *OperationHandler {
+	return &OperationHandler{DAO: dao}
 }
 
-func NewProductTypeHandler(dao database.ProductTypeDAO) *ProductTypeHandler {
-	return &ProductTypeHandler{DAO: dao}
-}
-
-func (h *ProductTypeHandler) CreateProductType(w http.ResponseWriter, r *http.Request) {
+func (h *OperationHandler) CreateOperation(w http.ResponseWriter, r *http.Request) {
 
 	//getting body request
-	var dto dto.CreateProductTypeInput
+	var dto dto.CreateOperationInput
 	err := json.NewDecoder(r.Body).Decode(&dto)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -36,7 +32,7 @@ func (h *ProductTypeHandler) CreateProductType(w http.ResponseWriter, r *http.Re
 	}
 
 	//creating a new instance in memory
-	found, err := entity.NewProductType(dto.Id, dto.Description)
+	record, err := entity.NewOperation(dto.Id, dto.Name)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error{Message: err.Error()})
@@ -44,7 +40,7 @@ func (h *ProductTypeHandler) CreateProductType(w http.ResponseWriter, r *http.Re
 	}
 
 	//inserting into the database
-	err = h.DAO.Create(found)
+	err = h.DAO.Create(record)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(Error{Message: err.Error()})
@@ -55,7 +51,7 @@ func (h *ProductTypeHandler) CreateProductType(w http.ResponseWriter, r *http.Re
 
 }
 
-func (h *ProductTypeHandler) UpdateProductType(w http.ResponseWriter, r *http.Request) {
+func (h *OperationHandler) UpdateOperation(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	if param == "" {
@@ -69,7 +65,7 @@ func (h *ProductTypeHandler) UpdateProductType(w http.ResponseWriter, r *http.Re
 		return
 	}
 	//getting body request
-	var record entity.ProductType
+	var record entity.Operation
 	err = json.NewDecoder(r.Body).Decode(&record)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -80,9 +76,10 @@ func (h *ProductTypeHandler) UpdateProductType(w http.ResponseWriter, r *http.Re
 	_, err = h.DAO.FindById(int(id))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(Error{Message: " record not found - " + err.Error()})
+		json.NewEncoder(w).Encode(Error{Message: "record not found - " + err.Error()})
 		return
 	}
+
 	record.UpdatedAt = time.Now()
 	//updating record in database
 	err = h.DAO.Update(&record)
@@ -95,7 +92,7 @@ func (h *ProductTypeHandler) UpdateProductType(w http.ResponseWriter, r *http.Re
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *ProductTypeHandler) DeleteProductType(w http.ResponseWriter, r *http.Request) {
+func (h *OperationHandler) DeleteOperation(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	if param == "" {
@@ -112,7 +109,7 @@ func (h *ProductTypeHandler) DeleteProductType(w http.ResponseWriter, r *http.Re
 	found, err := h.DAO.FindById(int(id))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(Error{Message: " record not found - " + err.Error()})
+		json.NewEncoder(w).Encode(Error{Message: "record not found - " + err.Error()})
 		return
 	}
 
@@ -127,7 +124,7 @@ func (h *ProductTypeHandler) DeleteProductType(w http.ResponseWriter, r *http.Re
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *ProductTypeHandler) GetProductType(w http.ResponseWriter, r *http.Request) {
+func (h *OperationHandler) GetOperation(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	if param == "" {
@@ -144,7 +141,7 @@ func (h *ProductTypeHandler) GetProductType(w http.ResponseWriter, r *http.Reque
 	found, err := h.DAO.FindById(id)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(Error{Message: " record not found - " + err.Error()})
+		json.NewEncoder(w).Encode(Error{Message: "record not found - " + err.Error()})
 		return
 	}
 
@@ -154,7 +151,7 @@ func (h *ProductTypeHandler) GetProductType(w http.ResponseWriter, r *http.Reque
 
 }
 
-func (h *ProductTypeHandler) GetAllProductType(w http.ResponseWriter, r *http.Request) {
+func (h *OperationHandler) GetAllOperation(w http.ResponseWriter, r *http.Request) {
 
 	foundList, err := h.DAO.FindAll()
 	if err != nil {

@@ -19,13 +19,13 @@ import (
 var ErrPerformedAtIsRequired = errors.New("time of transaction is required")
 
 type Transaction struct {
-	Id int `json:"id"`
-	User
-	Operation
-	StockProduct
-	Label
-	PerformedAt time.Time `json:"performed_at"`
-	Quantity    int       `json:"quantity"`
+	Id           int `json:"id"`
+	User         `json:"user"`
+	Operation    `json:"operation"`
+	StockProduct `json:"stock_product"`
+	Label        `json:"label"`
+	PerformedAt  time.Time `json:"performed_at"`
+	Quantity     int       `json:"quantity"`
 }
 
 func (t *Transaction) Validate() error {

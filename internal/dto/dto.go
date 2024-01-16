@@ -42,7 +42,7 @@ type CreateUserInput struct {
 }
 type CreateTransactionInput struct {
 	Id             int       `json:"id"`
-	UserId         int       `json:"user_idd"`
+	UserId         int       `json:"user_id"`
 	OperationId    int       `json:"operation_id"`
 	StockProductId int       `json:"stock_product_id"`
 	LabelId        int       `json:"label_id"`
@@ -57,4 +57,6 @@ type CreateUserOperationInput struct {
 type CreateUserSessionInput struct {
 	Id     int `json:"id"`
 	UserId int `json:"user_id"`
+	StartedAt time.Time `json:"started_at"`
+	FinishedAt time.Time `json:"finished_at"`
 }

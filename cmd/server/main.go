@@ -37,13 +37,21 @@ func main() {
 		panic(err)
 	}
 
-	ptDAO := database.NewProductTypeDAO(db)
-	ptHandler := handlers.NewProductTypeHandler(*ptDAO)
-
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
+	createRoutes(r, db)
+
+	http.ListenAndServe(":8888", r)
+
+}
+
+func createRoutes(r *chi.Mux, db *sql.DB) {
+
+	//product type
+	ptDAO := database.NewProductTypeDAO(db)
+	ptHandler := handlers.NewProductTypeHandler(*ptDAO)
 	r.Route("/product_types", func(r chi.Router) {
 		r.Post("/", ptHandler.CreateProductType)
 		r.Get("/", ptHandler.GetAllProductType)
@@ -52,6 +60,102 @@ func main() {
 		r.Delete("/{id}", ptHandler.DeleteProductType)
 	})
 
-	http.ListenAndServe(":8888", r)
+	//product
+	pDAO := database.NewProductDAO(db)
+	pHandler := handlers.NewProductHandler(*pDAO)
+	r.Route("/products", func(r chi.Router) {
+		r.Post("/", pHandler.CreateProduct)
+		r.Get("/", pHandler.GetAllProduct)
+		r.Get("/{id}", pHandler.GetProduct)
+		r.Put("/{id}", pHandler.UpdateProduct)
+		r.Delete("/{id}", pHandler.DeleteProduct)
+	})
 
+	//label
+	lDAO := database.NewLabelDAO(db)
+	lHandler := handlers.NewLabelHandler(*lDAO)
+	r.Route("/labels", func(r chi.Router) {
+		r.Post("/", lHandler.CreateLabel)
+		r.Get("/", lHandler.GetAllLabel)
+		r.Get("/{id}", lHandler.GetLabel)
+		r.Put("/{id}", lHandler.UpdateLabel)
+		r.Delete("/{id}", lHandler.DeleteLabel)
+	})
+
+	//operation
+	opDAO := database.NewOperationDAO(db)
+	opHandler := handlers.NewOperationHandler(*opDAO)
+	r.Route("/operations", func(r chi.Router) {
+		r.Post("/", opHandler.CreateOperation)
+		r.Get("/", opHandler.GetAllOperation)
+		r.Get("/{id}", opHandler.GetOperation)
+		r.Put("/{id}", opHandler.UpdateOperation)
+		r.Delete("/{id}", opHandler.DeleteOperation)
+	})
+
+	//stock
+	stDAO := database.NewStockDAO(db)
+	stHandler := handlers.NewStockHandler(*stDAO)
+	r.Route("/stocks", func(r chi.Router) {
+		r.Post("/", stHandler.CreateStock)
+		r.Get("/", stHandler.GetAllStock)
+		r.Get("/{id}", stHandler.GetStock)
+		r.Put("/{id}", stHandler.UpdateStock)
+		r.Delete("/{id}", stHandler.DeleteStock)
+	})
+
+	//stock product
+	spDAO := database.NewStockProductDAO(db)
+	spHandler := handlers.NewStockProductHandler(*spDAO)
+	r.Route("/stock_products", func(r chi.Router) {
+		r.Post("/", spHandler.CreateStockProduct)
+		r.Get("/", spHandler.GetAllStockProduct)
+		r.Get("/{id}", spHandler.GetStockProduct)
+		r.Put("/{id}", spHandler.UpdateStockProduct)
+		r.Delete("/{id}", spHandler.DeleteStockProduct)
+	})
+
+	//transaction
+	trDAO := database.NewTransactionDAO(db)
+	trHandler := handlers.NewTransactionHandler(*trDAO)
+	r.Route("/transactions", func(r chi.Router) {
+		r.Post("/", trHandler.CreateTransaction)
+		r.Get("/", trHandler.GetAllTransaction)
+		r.Get("/{id}", trHandler.GetTransaction)
+		r.Put("/{id}", trHandler.UpdateTransaction)
+		r.Delete("/{id}", trHandler.DeleteTransaction)
+	})
+
+	//user
+	userDAO := database.NewUserDAO(db)
+	userHandler := handlers.NewUserHandler(*userDAO)
+	r.Route("/users", func(r chi.Router) {
+		r.Post("/", userHandler.CreateUser)
+		r.Get("/", userHandler.GetAllUser)
+		r.Get("/{id}", userHandler.GetUser)
+		r.Put("/{id}", userHandler.UpdateUser)
+		r.Delete("/{id}", userHandler.DeleteUser)
+	})
+
+	//User session
+	sessionDAO := database.NewUserSessionDAO(db)
+	sessionHandler := handlers.NewUserSessionHandler(*sessionDAO)
+	r.Route("/user_sessions", func(r chi.Router) {
+		r.Post("/", sessionHandler.CreateUserSession)
+		r.Get("/", sessionHandler.GetAllUserSession)
+		r.Get("/{id}", sessionHandler.GetUserSession)
+		r.Put("/{id}", sessionHandler.UpdateUserSession)
+		r.Delete("/{id}", sessionHandler.DeleteUserSession)
+	})
+
+	//user operations
+	uoDAO := database.NewUserOperationDAO(db)
+	uoHandler := handlers.NewUserOperationHandler(*uoDAO)
+	r.Route("/user_operations", func(r chi.Router) {
+		r.Post("/", uoHandler.CreateUserOperation)
+		r.Get("/", uoHandler.GetAllUserOperation)
+		r.Get("/{id}", uoHandler.GetUserOperation)
+		r.Put("/{id}", uoHandler.UpdateUserOperation)
+		r.Delete("/{id}", uoHandler.DeleteUserOperation)
+	})
 }

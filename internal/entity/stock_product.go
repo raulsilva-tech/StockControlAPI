@@ -28,8 +28,8 @@ type StockProduct struct {
 	Quantity  int       `json:"quantity"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	Stock
-	Product
+	Stock     `json:"stock"`
+	Product   `json:"product"`
 }
 
 func (sp *StockProduct) Validate() error {

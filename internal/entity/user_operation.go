@@ -19,8 +19,8 @@ type UserOperation struct {
 	Id        int       `json:"id"`
 	UpdatedAt time.Time `json:"updated_at"`
 	CreatedAt time.Time `json:"created_at"`
-	User
-	Operation
+	User      `json:"user"`
+	Operation `json:"operation"`
 }
 
 func (uo *UserOperation) Validate() error {

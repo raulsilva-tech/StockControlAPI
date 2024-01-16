@@ -1,0 +1,33 @@
+POST http://localhost:8888/labels HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":2,
+    "code":"12345",
+    "valid_date":"2024-10-07T21:04:42.578612Z",
+    "product_id": 2
+}
+###
+
+PUT http://localhost:8888/labels/2 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":2,
+    "code":"123456",
+    "valid_date":"2025-10-07T21:04:42.578612Z",
+    "product":{
+        "id": 1
+    }
+}
+###
+
+DELETE http://localhost:8888/labels/2 HTTP/1.1
+###
+
+GET http://localhost:8888/labels/2 HTTP/1.1
+Content-Type: application/json
+###
+
+GET http://localhost:8888/labels HTTP/1.1
+Content-Type: application/json

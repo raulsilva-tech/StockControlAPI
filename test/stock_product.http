@@ -1,0 +1,32 @@
+POST http://localhost:8888/stock_products HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "stock_id": 1,
+    "product_id":2,
+    "factor":1,
+    "quantity":0
+}
+###
+
+PUT http://localhost:8888/stock_products/10 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "stock":{"id":1},
+    "product":{"id":2},
+    "factor":2,
+    "quantity":0
+}
+###
+DELETE http://localhost:8888/stock_products/10 HTTP/1.1
+###
+
+GET http://localhost:8888/stock_products/10 HTTP/1.1
+Content-Type: application/json
+###
+
+GET http://localhost:8888/stock_products HTTP/1.1
+Content-Type: application/json

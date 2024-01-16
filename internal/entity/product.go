@@ -16,7 +16,7 @@ type Product struct {
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	Type        ProductType
+	ProductType `json:"product_type"`
 }
 
 func (p *Product) Validate() error {
@@ -26,7 +26,7 @@ func (p *Product) Validate() error {
 	if p.Description == "" {
 		return ErrDescriptionIsRequired
 	}
-	if p.Type.Id == 0 {
+	if p.ProductType.Id == 0 {
 		return ErrProductTypeIsRequired
 	}
 	return nil
@@ -36,7 +36,7 @@ func NewProduct(id int, description string, pt ProductType) (*Product, error) {
 	p := &Product{
 		Id:          id,
 		Description: description,
-		Type:        pt,
+		ProductType: pt,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}

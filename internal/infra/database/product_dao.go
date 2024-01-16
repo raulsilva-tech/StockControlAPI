@@ -22,7 +22,7 @@ func (dao *ProductDAO) Create(p *entity.Product) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(p.Id, p.Description, p.UpdatedAt, p.CreatedAt, p.Type.Id)
+	_, err = stmt.Exec(p.Id, p.Description, p.UpdatedAt, p.CreatedAt, p.ProductType.Id)
 
 	return err
 }
@@ -35,7 +35,7 @@ func (dao *ProductDAO) Update(p *entity.Product) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(p.Description, p.UpdatedAt, p.Type.Id, p.Id)
+	_, err = stmt.Exec(p.Description, p.UpdatedAt, p.ProductType.Id, p.Id)
 
 	return err
 }
@@ -63,7 +63,7 @@ func (dao *ProductDAO) FindById(id int) (*entity.Product, error) {
 
 	var pFound entity.Product
 
-	err = stmt.QueryRow(id).Scan(&pFound.Id, &pFound.Description, &pFound.CreatedAt, &pFound.UpdatedAt, &pFound.Type.Id)
+	err = stmt.QueryRow(id).Scan(&pFound.Id, &pFound.Description, &pFound.CreatedAt, &pFound.UpdatedAt, &pFound.ProductType.Id)
 
 	return &pFound, err
 }
@@ -80,7 +80,7 @@ func (dao *ProductDAO) FindAll() ([]*entity.Product, error) {
 
 	for rows.Next() {
 		var p entity.Product
-		err = rows.Scan(&p.Id, &p.Description, &p.CreatedAt, &p.UpdatedAt, &p.Type.Id)
+		err = rows.Scan(&p.Id, &p.Description, &p.CreatedAt, &p.UpdatedAt, &p.ProductType.Id)
 		pList = append(pList, &p)
 	}
 

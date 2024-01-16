@@ -12,22 +12,18 @@ import (
 	"github.com/raulsilva-tech/StockControlAPI/internal/infra/database"
 )
 
-type Error struct {
-	Message string `json:"message"`
+type UserSessionHandler struct {
+	DAO database.UserSessionDAO
 }
 
-type ProductTypeHandler struct {
-	DAO database.ProductTypeDAO
+func NewUserSessionHandler(dao database.UserSessionDAO) *UserSessionHandler {
+	return &UserSessionHandler{DAO: dao}
 }
 
-func NewProductTypeHandler(dao database.ProductTypeDAO) *ProductTypeHandler {
-	return &ProductTypeHandler{DAO: dao}
-}
-
-func (h *ProductTypeHandler) CreateProductType(w http.ResponseWriter, r *http.Request) {
+func (h *UserSessionHandler) CreateUserSession(w http.ResponseWriter, r *http.Request) {
 
 	//getting body request
-	var dto dto.CreateProductTypeInput
+	var dto dto.CreateUserSessionInput
 	err := json.NewDecoder(r.Body).Decode(&dto)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -36,7 +32,7 @@ func (h *ProductTypeHandler) CreateProductType(w http.ResponseWriter, r *http.Re
 	}
 
 	//creating a new instance in memory
-	found, err := entity.NewProductType(dto.Id, dto.Description)
+	found, err := entity.NewUserSession(dto.Id, entity.User{Id: dto.UserId}, dto.StartedAt, dto.FinishedAt)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error{Message: err.Error()})
@@ -55,7 +51,7 @@ func (h *ProductTypeHandler) CreateProductType(w http.ResponseWriter, r *http.Re
 
 }
 
-func (h *ProductTypeHandler) UpdateProductType(w http.ResponseWriter, r *http.Request) {
+func (h *UserSessionHandler) UpdateUserSession(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	if param == "" {
@@ -69,7 +65,7 @@ func (h *ProductTypeHandler) UpdateProductType(w http.ResponseWriter, r *http.Re
 		return
 	}
 	//getting body request
-	var record entity.ProductType
+	var record entity.UserSession
 	err = json.NewDecoder(r.Body).Decode(&record)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -80,7 +76,7 @@ func (h *ProductTypeHandler) UpdateProductType(w http.ResponseWriter, r *http.Re
 	_, err = h.DAO.FindById(int(id))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(Error{Message: " record not found - " + err.Error()})
+		json.NewEncoder(w).Encode(Error{Message: "record not found - " + err.Error()})
 		return
 	}
 	record.UpdatedAt = time.Now()
@@ -95,7 +91,7 @@ func (h *ProductTypeHandler) UpdateProductType(w http.ResponseWriter, r *http.Re
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *ProductTypeHandler) DeleteProductType(w http.ResponseWriter, r *http.Request) {
+func (h *UserSessionHandler) DeleteUserSession(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	if param == "" {
@@ -112,7 +108,7 @@ func (h *ProductTypeHandler) DeleteProductType(w http.ResponseWriter, r *http.Re
 	found, err := h.DAO.FindById(int(id))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(Error{Message: " record not found - " + err.Error()})
+		json.NewEncoder(w).Encode(Error{Message: "record not found - " + err.Error()})
 		return
 	}
 
@@ -127,7 +123,7 @@ func (h *ProductTypeHandler) DeleteProductType(w http.ResponseWriter, r *http.Re
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *ProductTypeHandler) GetProductType(w http.ResponseWriter, r *http.Request) {
+func (h *UserSessionHandler) GetUserSession(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	if param == "" {
@@ -144,7 +140,7 @@ func (h *ProductTypeHandler) GetProductType(w http.ResponseWriter, r *http.Reque
 	found, err := h.DAO.FindById(id)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(Error{Message: " record not found - " + err.Error()})
+		json.NewEncoder(w).Encode(Error{Message: "record not found - " + err.Error()})
 		return
 	}
 
@@ -154,7 +150,7 @@ func (h *ProductTypeHandler) GetProductType(w http.ResponseWriter, r *http.Reque
 
 }
 
-func (h *ProductTypeHandler) GetAllProductType(w http.ResponseWriter, r *http.Request) {
+func (h *UserSessionHandler) GetAllUserSession(w http.ResponseWriter, r *http.Request) {
 
 	foundList, err := h.DAO.FindAll()
 	if err != nil {
