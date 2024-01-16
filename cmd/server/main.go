@@ -3,9 +3,14 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/lib/pq"
 	"github.com/raulsilva-tech/StockControlAPI/configs"
+	"github.com/raulsilva-tech/StockControlAPI/internal/infra/database"
+	"github.com/raulsilva-tech/StockControlAPI/internal/infra/webserver/handlers"
 )
 
 type Product struct {
@@ -26,35 +31,27 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
-	// selectAllProducts(db)
+	ptDAO := database.NewProductTypeDAO(db)
+	ptHandler := handlers.NewProductTypeHandler(*ptDAO)
+
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
+	r.Route("/product_types", func(r chi.Router) {
+		r.Post("/", ptHandler.CreateProductType)
+		r.Get("/", ptHandler.GetAllProductType)
+		r.Get("/{id}", ptHandler.GetProductType)
+		r.Put("/{id}", ptHandler.UpdateProductType)
+		r.Delete("/{id}", ptHandler.DeleteProductType)
+	})
+
+	http.ListenAndServe(":8888", r)
+
 }
-
-// func selectAllProducts(db *sql.DB) error {
-// 	rows, err := db.Query("select id,description from products")
-// 	if err != nil {
-// 		return err
-// 	}
-// 	defer rows.Close()
-
-// 	var products []Product
-
-// 	for rows.Next() {
-// 		var p Product
-// 		err = rows.Scan(&p.Id, &p.Description)
-// 		products = append(products, p)
-// 		fmt.Println(p)
-// 	}
-
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-
-// }

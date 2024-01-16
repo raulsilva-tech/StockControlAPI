@@ -1,0 +1,26 @@
+POST http://localhost:8888/product_types HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "description":"Generic product type"
+}
+###
+PUT http://localhost:8888/product_types/1000 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "description":"Generic product"
+}
+###
+DELETE http://localhost:8888/product_types/1202 HTTP/1.1
+
+
+###
+
+GET http://localhost:8888/product_types/10 HTTP/1.1
+Content-Type: application/json
+###
+GET http://localhost:8888/product_types HTTP/1.1
+Content-Type: application/json
