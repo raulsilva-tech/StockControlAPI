@@ -135,6 +135,8 @@ func createRoutes(r *chi.Mux, db *sql.DB) {
 		r.Get("/{id}", userHandler.GetUser)
 		r.Put("/{id}", userHandler.UpdateUser)
 		r.Delete("/{id}", userHandler.DeleteUser)
+		r.Post("/login", userHandler.Login)
+		r.Get("/logout/{id}", userHandler.Logout)
 	})
 
 	//User session
