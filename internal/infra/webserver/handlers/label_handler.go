@@ -20,6 +20,16 @@ func NewLabelHandler(dao database.LabelDAO) *LabelHandler {
 	return &LabelHandler{DAO: dao}
 }
 
+// Create label godoc
+// @Summary			Create label
+// @Description		Creates a label in the database
+// @Tags 			labels
+// @Accept			json
+// @Produce			json
+// @Param			request	body	dto.CreateLabelInput	true	"label request"
+// @Success 		201
+// @Failure 		500	{object}	Error
+// @Router 			/labels	[post]
 func (h *LabelHandler) CreateLabel(w http.ResponseWriter, r *http.Request) {
 
 	//getting body request
@@ -51,6 +61,18 @@ func (h *LabelHandler) CreateLabel(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// UpdateLabel godoc
+// @Summary Update a label
+// @Description Updates a label in the database
+// @Tags labels
+// @Accept json
+// @Produce json
+// @Param id path int true "label ID"
+// @Param label body entity.Label true "label data"
+// @Success 200 {object} entity.Label
+// @Failure 400 {object} Error
+// @Failure 404 {object} Error
+// @Router /labels/{id} [put]
 func (h *LabelHandler) UpdateLabel(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
@@ -92,6 +114,17 @@ func (h *LabelHandler) UpdateLabel(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// Deletelabel godoc
+// @Summary Delete a label
+// @Description Deletes a label from the database
+// @Tags labels
+// @Accept json
+// @Produce json
+// @Param id path int true "label ID"
+// @Success 200
+// @Failure 400 {object} Error
+// @Failure 404 {object} Error
+// @Router /labels/{id} [delete]
 func (h *LabelHandler) DeleteLabel(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
@@ -124,6 +157,17 @@ func (h *LabelHandler) DeleteLabel(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// Getlabel godoc
+// @Summary Get a label
+// @Description Get a label by its id
+// @Tags labels
+// @Accept json
+// @Produce json
+// @Param id path int true "label ID"
+// @Success 200 {object} entity.Label
+// @Failure 400 {object} Error
+// @Failure 404 {object} Error
+// @Router /labels/{id} [get]
 func (h *LabelHandler) GetLabel(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
@@ -151,6 +195,15 @@ func (h *LabelHandler) GetLabel(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// FindAll godoc
+// @Summary			Finds all labels
+// @Description		Finds all labels in the database
+// @Tags 			labels
+// @Accept			json
+// @Produce			json
+// @Success 		200	{array}	entity.Label
+// @Failure 		500	{object}	Error
+// @Router 			/labels	[get]
 func (h *LabelHandler) GetAllLabel(w http.ResponseWriter, r *http.Request) {
 
 	foundList, err := h.DAO.FindAll()

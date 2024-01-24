@@ -1,0 +1,202 @@
+basePath: /
+definitions:
+  dto.CreateLabelInput:
+    properties:
+      code:
+        type: string
+      id:
+        type: integer
+      product_id:
+        type: integer
+      valid_date:
+        type: string
+    type: object
+  entity.Label:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      product:
+        $ref: '#/definitions/entity.Product'
+      updated_at:
+        type: string
+      valid_date:
+        type: string
+    type: object
+  entity.Product:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      product_type:
+        $ref: '#/definitions/entity.ProductType'
+      updated_at:
+        type: string
+    type: object
+  entity.ProductType:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  handlers.Error:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8888
+info:
+  contact:
+    email: raulpaes.work@gmail.com
+    name: Raul Paes Silva
+    url: http://github.com/raulsilva-tech
+  description: Stock Control API
+  termsOfService: http://swagger.io/terms
+  title: Stock Control API
+  version: "1.0"
+paths:
+  /labels:
+    get:
+      consumes:
+      - application/json
+      description: Finds all labels in the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Label'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Finds all labels
+      tags:
+      - labels
+    post:
+      consumes:
+      - application/json
+      description: Creates a label in the database
+      parameters:
+      - description: label request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateLabelInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Create label
+      tags:
+      - labels
+  /labels/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a label from the database
+      parameters:
+      - description: label ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Delete a label
+      tags:
+      - labels
+    get:
+      consumes:
+      - application/json
+      description: Get a label by its id
+      parameters:
+      - description: label ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Label'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Get a label
+      tags:
+      - labels
+    put:
+      consumes:
+      - application/json
+      description: Updates a label in the database
+      parameters:
+      - description: label ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: label data
+        in: body
+        name: label
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Label'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Label'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Update a label
+      tags:
+      - labels
+swagger: "2.0"

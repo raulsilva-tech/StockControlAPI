@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -37,6 +39,77 @@ func (h *TransactionHandler) CreateTransaction(w http.ResponseWriter, r *http.Re
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
+	}
+
+
+	//verify user access to the operation
+	if record.User.Id != 0 && record.Operation.Id != 0 {
+		fmt.Println("Checking user privilege...")
+		uoDAO := database.NewUserOperationDAO(h.DAO.Db)
+		uo, err := uoDAO.FindByUserAndOperation(record.User.Id, record.Operation.Id)
+		if err != nil && err != sql.ErrNoRows {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(Error{Message: err.Error()})
+			return
+		}
+		if uo.Id == 0 {
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(Error{Message: "unauthorized: user does not have privilege to access the informed operation"})
+			return
+		}
+
+		//check session open from the same user
+		usDAO := database.NewUserSessionDAO(h.DAO.Db)
+		err = usDAO.CheckUserSessionIsOpen(record.User.Id)
+		if err != nil {
+			if err == database.ErrNoOpenSession {
+				w.WriteHeader(http.StatusBadRequest)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+			json.NewEncoder(w).Encode(Error{Message: err.Error()})
+			return
+		}
+
+		//verify and update stock balance
+		if record.StockProduct.Id != 0 {
+			spDAO := database.NewStockProductDAO(h.DAO.Db)
+			spRecord, err := spDAO.FindById(record.StockProduct.Id)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(Error{Message: err.Error()})
+				return
+			}
+
+			opDAO := database.NewOperationDAO(h.DAO.Db)
+			opRecord, err := opDAO.FindById(record.Operation.Id)
+
+			if opRecord.Name == "Withdrawal" || opRecord.Name == "Stock Decrease" {
+				if spRecord.Quantity < record.Quantity {
+					w.WriteHeader(http.StatusBadRequest)
+					json.NewEncoder(w).Encode(Error{Message: "insufficient stock balance"})
+					return
+				}
+
+				spRecord.Quantity = spRecord.Quantity - record.Quantity
+
+			} else {
+				if opRecord.Name == "Devolution" || opRecord.Name == "Supply" {
+					spRecord.Quantity = spRecord.Quantity + record.Quantity
+				} else {
+					if opRecord.Name == "Inventory" {
+						spRecord.Quantity = record.Quantity
+					}
+				}
+			}
+
+			err = spDAO.Update(spRecord)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(Error{Message: err.Error()})
+				return
+			}
+		}
 	}
 
 	//inserting into the database

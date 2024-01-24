@@ -5,18 +5,28 @@ import (
 	"fmt"
 	"net/http"
 
+	_ "github.com/raulsilva-tech/StockControlAPI/docs"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/lib/pq"
 	"github.com/raulsilva-tech/StockControlAPI/configs"
 	"github.com/raulsilva-tech/StockControlAPI/internal/infra/database"
 	"github.com/raulsilva-tech/StockControlAPI/internal/infra/webserver/handlers"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-type Product struct {
-	Id          string
-	Description string
-}
+// @title	Stock Control API
+// @version	1.0
+// @description Stock Control API
+// @termsOfService	http://swagger.io/terms
+
+// @contact.name	Raul Paes Silva
+// @contact.url	http://github.com/raulsilva-tech
+// @contact.email raulpaes.work@gmail.com
+
+// @host	localhost:8888
+// @BasePath /
 
 func main() {
 
@@ -43,7 +53,10 @@ func main() {
 
 	createRoutes(r, db)
 
-	http.ListenAndServe(":8888", r)
+	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8888/docs/doc.json")))
+
+	fmt.Println("Server started on port " + cfg.WebServerPort)
+	http.ListenAndServe(":"+cfg.WebServerPort, r)
 
 }
 
@@ -135,6 +148,8 @@ func createRoutes(r *chi.Mux, db *sql.DB) {
 		r.Get("/{id}", userHandler.GetUser)
 		r.Put("/{id}", userHandler.UpdateUser)
 		r.Delete("/{id}", userHandler.DeleteUser)
+		r.Post("/login", userHandler.Login)
+		r.Get("/logout/{id}", userHandler.Logout)
 	})
 
 	//User session

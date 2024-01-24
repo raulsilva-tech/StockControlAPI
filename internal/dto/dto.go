@@ -55,8 +55,13 @@ type CreateUserOperationInput struct {
 	OperationId int `json:"operation_id"`
 }
 type CreateUserSessionInput struct {
-	Id     int `json:"id"`
-	UserId int `json:"user_id"`
-	StartedAt time.Time `json:"started_at"`
+	Id         int       `json:"id"`
+	UserId     int       `json:"user_id"`
+	StartedAt  time.Time `json:"started_at"`
 	FinishedAt time.Time `json:"finished_at"`
+}
+
+type CreateLoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }

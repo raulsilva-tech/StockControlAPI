@@ -86,3 +86,18 @@ func (dao *UserOperationDAO) FindAll() ([]*entity.UserOperation, error) {
 
 	return list, err
 }
+
+func (dao *UserOperationDAO) FindByUserAndOperation(userId, operationId int) (*entity.UserOperation, error) {
+
+	stmt, err := dao.Db.Prepare("select id,user_id,operation_id,created_at,updated_at from user_operations where user_id=$1 and operation_id=$2")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	var found entity.UserOperation
+
+	err = stmt.QueryRow(userId, operationId).Scan(&found.Id, &found.User.Id, &found.Operation.Id, &found.CreatedAt, &found.UpdatedAt)
+
+	return &found, err
+}
