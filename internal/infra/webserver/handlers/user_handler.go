@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -162,5 +163,89 @@ func (h *UserHandler) GetAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(foundList)
 	w.WriteHeader(http.StatusOK)
+
+}
+
+func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+
+	var dto dto.CreateLoginInput
+	err := json.NewDecoder(r.Body).Decode(&dto)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
+		return
+	}
+
+	user, err := h.DAO.FindByEmailAndPassword(dto.Email, dto.Password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(Error{Message: err.Error()})
+			return
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(Error{Message: err.Error()})
+			return
+		}
+	}
+
+	if user.Id != 0 {
+
+		//create user session
+
+		sessionDAO := database.NewUserSessionDAO(h.DAO.Db)
+
+		//getting next session id
+		sessionId, err := sessionDAO.GetNextId()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(Error{Message: err.Error()})
+			return
+		}
+
+		var emptyTime time.Time
+		userSession, err := entity.NewUserSession(sessionId, *user, time.Now(), emptyTime)
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(Error{Message: err.Error()})
+			return
+		}
+
+		err = sessionDAO.Create(userSession)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(Error{Message: err.Error()})
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(Error{Message: "User session started successfully"})
+	}
+}
+
+func (h *UserHandler) Logout(w http.ResponseWriter, r *http.Request) {
+
+	param := chi.URLParam(r, "id")
+	if param == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	id, _ := strconv.Atoi(param)
+
+	sessionDAO := database.NewUserSessionDAO(h.DAO.Db)
+	err := sessionDAO.CheckAndLogoutLastUserSession(id)
+	if err != nil {
+		if err == database.ErrLastSessionAlreadyFinished {
+			w.WriteHeader(http.StatusBadRequest)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(Error{Message: "User session finished successfully"})
 
 }

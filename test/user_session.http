@@ -2,10 +2,9 @@ POST http://localhost:8888/user_sessions HTTP/1.1
 Content-Type: application/json
 
 {
-    "id":10,
+    "id":12,
     "user_id":1,
-    "started_at":"2024-10-07T21:02:42.578612Z",
-    "finished_at": "2024-10-07T21:04:42.578612Z"
+    "started_at":"2024-01-23T21:02:42.578612Z"
 }
 ###
 

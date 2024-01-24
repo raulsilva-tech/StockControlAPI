@@ -86,3 +86,19 @@ func (dao *UserDAO) FindAll() ([]*entity.User, error) {
 
 	return list, err
 }
+
+func (dao *UserDAO) FindByEmailAndPassword(email, password string) (*entity.User, error) {
+
+	stmt, err := dao.Db.Prepare("select id, name, email, password, created_at, updated_at from users where email=$1 and password=$2")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	var user entity.User
+
+	err = stmt.QueryRow(email, password).Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.CreatedAt, &user.UpdatedAt)
+
+	return &user, err
+
+}

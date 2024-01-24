@@ -35,9 +35,9 @@ func (us *UserSession) Validate() error {
 	if us.StartedAt.IsZero() {
 		return ErrStartSessionIsRequired
 	}
-	if us.FinishedAt.Compare(us.StartedAt) == -1 {
-		return ErrInvalidFinishedTime
-	}
+	// if us.FinishedAt.Compare(us.StartedAt) == -1 {
+	// 	return ErrInvalidFinishedTime
+	// }
 
 	return nil
 }

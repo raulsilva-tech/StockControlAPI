@@ -3,6 +3,8 @@ package entity
 import (
 	"errors"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 /*
@@ -24,7 +26,7 @@ type User struct {
 	Id        int       `json:"id"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
-	Password  string    `json:"password"`
+	Password  string    `json:"-"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -47,11 +49,17 @@ func (u *User) Validate() error {
 }
 
 func NewUser(id int, name, email, password string) (*User, error) {
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
 	u := &User{
 		Id:        id,
 		Name:      name,
 		Email:     email,
-		Password:  password,
+		Password:  string(hash),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
