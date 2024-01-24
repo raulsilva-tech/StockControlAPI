@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 POST http://localhost:8888/operations HTTP/1.1
 Content-Type: application/json
 
@@ -23,4 +24,31 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8888/operations HTTP/1.1
+=======
+POST http://localhost:8888/operations HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "name":"Test operation"
+}
+###
+
+PUT http://localhost:8888/operations/10 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "name":"Operation Test"
+}
+###
+DELETE http://localhost:8888/operations/10 HTTP/1.1
+###
+
+GET http://localhost:8888/operations/10 HTTP/1.1
+Content-Type: application/json
+###
+
+GET http://localhost:8888/operations HTTP/1.1
+>>>>>>> d4eba3be9444a00975090f26358cb6323f2e2548
 Content-Type: application/json

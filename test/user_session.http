@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 POST http://localhost:8888/user_sessions HTTP/1.1
 Content-Type: application/json
 
@@ -26,4 +27,35 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8888/user_sessions HTTP/1.1
+=======
+POST http://localhost:8888/user_sessions HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "user_id":1,
+    "started_at":"2024-10-07T21:02:42.578612Z",
+    "finished_at": "2024-10-07T21:04:42.578612Z"
+}
+###
+
+PUT http://localhost:8888/user_sessions/10 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id":10,
+    "user":{"id":1},
+    "started_at":"2024-10-07T21:03:42.578612Z",
+    "finished_at": "2024-10-07T21:04:42.578612Z"
+}
+###
+DELETE http://localhost:8888/user_sessions/10 HTTP/1.1
+###
+
+GET http://localhost:8888/user_sessions/10 HTTP/1.1
+Content-Type: application/json
+###
+
+GET http://localhost:8888/user_sessions HTTP/1.1
+>>>>>>> d4eba3be9444a00975090f26358cb6323f2e2548
 Content-Type: application/json
